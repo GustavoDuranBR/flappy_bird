@@ -6,52 +6,56 @@ import neat
 ai_jogando = True
 geracao = 0
 
-TELA_LARGURA = 1024
-TELA_ALTURA = 854
+TELA_LARGURA = 864
+TELA_ALTURA = 936
 
-IMAGEM_CANO = pygame.transform.scale2x(pygame.image.load(os.path.join('img', 'pipe.png')))
-IMAGEM_CHAO = pygame.transform.scale2x(pygame.image.load(os.path.join('img', 'ground.png')))
-IMAGEM_BACKGROUND = pygame.transform.scale2x(pygame.image.load(os.path.join('img', 'bg.png')))
+IMAGEM_CANO = pygame.image.load(os.path.join('img/pipe.png'))
+IMAGEM_CHAO = pygame.image.load(os.path.join('img/ground.png'))
+IMAGEM_BACKGROUND = pygame.image.load(os.path.join('img/bg.png'))
 IMAGENS_PASSARO = [
-    pygame.transform.scale2x(pygame.image.load(os.path.join('img', 'bird1.png'))),
-    pygame.transform.scale2x(pygame.image.load(os.path.join('img', 'bird2.png'))),
-    pygame.transform.scale2x(pygame.image.load(os.path.join('img', 'bird3.png'))),
+    pygame.image.load(os.path.join('img/bird1.png')),
+    pygame.image.load(os.path.join('img/bird2.png')),
+    pygame.image.load(os.path.join('img/bird3.png')),
 ]
 
 pygame.font.init()
-FONTE_PONTOS = pygame.font.SysFont('arial', 30)
+
+screen = pygame.display.set_mode((TELA_LARGURA, TELA_ALTURA))
+pygame.display.set_caption('Flappy Bird')
+
+FONTE_PONTOS = pygame.font.SysFont('Bauhaus 93', 60)
 
 
 class Passaro:
     IMGS = IMAGENS_PASSARO
     # animações da rotação
-    ROTACAO_MAXIMA = 25
-    VELOCIDADE_ROTACAO = 30
+    ROTACAO_MAXIMA = 20
+    VELOCIDADE_ROTACAO = 20
     TEMPO_ANIMACAO = 5
 
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.angulo = 0
-        self.velocidade = 2
+        self.velocidade = 1
         self.altura = self.y
         self.tempo = 0
         self.contagem_imagem = 0
         self.imagem = self.IMGS[0]
 
     def pular(self):
-        self.velocidade = -10.5
+        self.velocidade = -11
         self.tempo = 0
         self.altura = self.y
 
     def mover(self):
         # calcular o deslocamento
-        self.tempo += 1
-        deslocamento = 1.5 * (self.tempo**2) + self.velocidade * self.tempo
+        self.tempo += 2
+        deslocamento = 2 * (self.tempo**2) + self.velocidade * self.tempo
 
         # restringir o deslocamento
-        if deslocamento > 16:
-            deslocamento = 16
+        if deslocamento > 25:
+            deslocamento = 25
         elif deslocamento < 0:
             deslocamento -= 2
 
@@ -98,9 +102,8 @@ class Passaro:
 
 
 class Cano:
-    DISTANCIA = 200
-    VELOCIDADE = 5
-
+    DISTANCIA = 100
+    VELOCIDADE = 10
     def __init__(self, x):
         self.x = x
         self.altura = 0
@@ -141,7 +144,7 @@ class Cano:
 
 
 class Chao:
-    VELOCIDADE = 5
+    VELOCIDADE = 10
     LARGURA = IMAGEM_CHAO.get_width()
     IMAGEM = IMAGEM_CHAO
 
@@ -288,7 +291,7 @@ def rodar(caminho_config):
     populacao.add_reporter(neat.StatisticsReporter())
 
     if ai_jogando:
-        populacao.run(main, 50)
+        populacao.run(main, 10000)
     else:
         main(None, None)
 
