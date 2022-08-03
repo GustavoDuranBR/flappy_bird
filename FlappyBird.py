@@ -5,6 +5,7 @@ import neat
 
 ai_jogando = True
 geracao = 0
+velocidade_total = 10
 
 TELA_LARGURA = 864
 TELA_ALTURA = 936
@@ -29,7 +30,7 @@ FONTE_PONTOS = pygame.font.SysFont('Bauhaus 93', 60)
 class Passaro:
     IMGS = IMAGENS_PASSARO
     # animações da rotação
-    ROTACAO_MAXIMA = 20
+    ROTACAO_MAXIMA = 25
     VELOCIDADE_ROTACAO = 20
     TEMPO_ANIMACAO = 5
 
@@ -37,7 +38,7 @@ class Passaro:
         self.x = x
         self.y = y
         self.angulo = 0
-        self.velocidade = 1
+        self.velocidade = 0
         self.altura = self.y
         self.tempo = 0
         self.contagem_imagem = 0
@@ -51,7 +52,7 @@ class Passaro:
     def mover(self):
         # calcular o deslocamento
         self.tempo += 2
-        deslocamento = 2 * (self.tempo**2) + self.velocidade * self.tempo
+        deslocamento = 2.5 * (self.tempo**2) + self.velocidade * self.tempo
 
         # restringir o deslocamento
         if deslocamento > 25:
@@ -103,7 +104,7 @@ class Passaro:
 
 class Cano:
     DISTANCIA = 100
-    VELOCIDADE = 10
+    VELOCIDADE = velocidade_total
     def __init__(self, x):
         self.x = x
         self.altura = 0
@@ -120,7 +121,7 @@ class Cano:
         self.pos_base = self.altura + self.DISTANCIA
 
     def mover(self):
-        self.x -= self.VELOCIDADE
+        self.x -= self.velocidade_total
 
     def desenhar(self, tela):
         tela.blit(self.CANO_TOPO, (self.x, self.pos_topo))
@@ -144,7 +145,7 @@ class Cano:
 
 
 class Chao:
-    VELOCIDADE = 10
+    VELOCIDADE = velocidade_total
     LARGURA = IMAGEM_CHAO.get_width()
     IMAGEM = IMAGEM_CHAO
 
@@ -154,8 +155,8 @@ class Chao:
         self.x2 = self.LARGURA
 
     def mover(self):
-        self.x1 -= self.VELOCIDADE
-        self.x2 -= self.VELOCIDADE
+        self.x1 -= self.velocidade_total
+        self.x2 -= self.velocidade_total
 
         if self.x1 + self.LARGURA < 0:
             self.x1 = self.x2 + self.LARGURA
@@ -175,11 +176,13 @@ def desenhar_tela(tela, passaros, canos, chao, pontos):
         cano.desenhar(tela)
 
     texto = FONTE_PONTOS.render(f"Pontuação: {pontos}", 1, (255, 255, 255))
-    tela.blit(texto, (TELA_LARGURA - 10 - texto.get_width(), 10))
+    tela.blit(texto, (TELA_LARGURA - 10 - texto.get_width(), 20))
 
     if ai_jogando:
-        texto = FONTE_PONTOS.render(f"Geração: {geracao}", 1, (255, 255, 255))
-        tela.blit(texto, (10, 10))
+        pontos = FONTE_PONTOS.render(f"Geração: {geracao}", 1, (255, 255, 255))
+        tela.blit(pontos, (10, 20))
+        texto = FONTE_velocidade_total.render(f"Velocidade: {velocidade_total}", 1, (255, 255, 255))
+        tela.blit(texto, (10, 60))
 
     chao.desenhar(tela)
     pygame.display.update()
