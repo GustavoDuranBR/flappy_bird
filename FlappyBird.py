@@ -104,7 +104,6 @@ class Passaro:
 
 class Cano:
     DISTANCIA = 100
-    VELOCIDADE = velocidade_total
     def __init__(self, x):
         self.x = x
         self.altura = 0
@@ -125,7 +124,7 @@ class Cano:
 
     def desenhar(self, tela):
         tela.blit(self.CANO_TOPO, (self.x, self.pos_topo))
-        tela.blit(self.CANO_BASE, (self.x, self.pos_base))
+        tela.blit(self.CANO_BASE, (self.x, self.pos_base)) 
 
     def colidir(self, passaro):
         passaro_mask = passaro.get_mask()
@@ -145,7 +144,6 @@ class Cano:
 
 
 class Chao:
-    VELOCIDADE = velocidade_total
     LARGURA = IMAGEM_CHAO.get_width()
     IMAGEM = IMAGEM_CHAO
 
