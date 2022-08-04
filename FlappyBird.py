@@ -5,18 +5,18 @@ import neat
 
 ai_jogando = True
 geracao = 0
-velocidade_total = 10
+velocidade_total = 5
 
 TELA_LARGURA = 864
-TELA_ALTURA = 936
+TELA_ALTURA = 900
 
 IMAGEM_CANO = pygame.image.load(os.path.join('img/pipe.png'))
 IMAGEM_CHAO = pygame.image.load(os.path.join('img/ground.png'))
 IMAGEM_BACKGROUND = pygame.image.load(os.path.join('img/bg.png'))
 IMAGENS_PASSARO = [
-    pygame.image.load(os.path.join('img/bird1.png')),
-    pygame.image.load(os.path.join('img/bird2.png')),
-    pygame.image.load(os.path.join('img/bird3.png')),
+    pygame.image.load(os.path.join('img/bird.png')),
+    pygame.image.load(os.path.join('img/bird.png')),
+    pygame.image.load(os.path.join('img/bird.png')),
 ]
 
 pygame.font.init()
@@ -24,7 +24,7 @@ pygame.font.init()
 screen = pygame.display.set_mode((TELA_LARGURA, TELA_ALTURA))
 pygame.display.set_caption('Flappy Bird')
 
-FONTE_PONTOS = pygame.font.SysFont('Bauhaus 93', 60)
+FONTE_DISPLAY = pygame.font.SysFont('Bauhaus 93', 40)
 
 
 class Passaro:
@@ -86,7 +86,6 @@ class Passaro:
             self.imagem = self.IMGS[0]
             self.contagem_imagem = 0
 
-
         # se o passaro tiver caindo eu não vou bater asa
         if self.angulo <= -80:
             self.imagem = self.IMGS[1]
@@ -103,7 +102,9 @@ class Passaro:
 
 
 class Cano:
+    VELOCIDADE = velocidade_total
     DISTANCIA = 100
+
     def __init__(self, x):
         self.x = x
         self.altura = 0
@@ -120,7 +121,7 @@ class Cano:
         self.pos_base = self.altura + self.DISTANCIA
 
     def mover(self):
-        self.x -= self.velocidade_total
+        self.x -= self.VELOCIDADE
 
     def desenhar(self, tela):
         tela.blit(self.CANO_TOPO, (self.x, self.pos_topo))
@@ -144,6 +145,7 @@ class Cano:
 
 
 class Chao:
+    VELOCIDADE = velocidade_total
     LARGURA = IMAGEM_CHAO.get_width()
     IMAGEM = IMAGEM_CHAO
 
@@ -153,8 +155,8 @@ class Chao:
         self.x2 = self.LARGURA
 
     def mover(self):
-        self.x1 -= self.velocidade_total
-        self.x2 -= self.velocidade_total
+        self.x1 -= self.VELOCIDADE
+        self.x2 -= self.VELOCIDADE
 
         if self.x1 + self.LARGURA < 0:
             self.x1 = self.x2 + self.LARGURA
@@ -173,21 +175,21 @@ def desenhar_tela(tela, passaros, canos, chao, pontos):
     for cano in canos:
         cano.desenhar(tela)
 
-    texto = FONTE_PONTOS.render(f"Pontuação: {pontos}", 1, (255, 255, 255))
+    texto = FONTE_DISPLAY.render(f"Pontuação: {pontos}", 1, (255, 255, 255))
     tela.blit(texto, (TELA_LARGURA - 10 - texto.get_width(), 20))
 
     if ai_jogando:
-        pontos = FONTE_PONTOS.render(f"Geração: {geracao}", 1, (255, 255, 255))
+        pontos = FONTE_DISPLAY.render(f"Geração: {geracao}", 1, (255, 255, 255))
         tela.blit(pontos, (10, 20))
-        texto = FONTE_velocidade_total.render(f"Velocidade: {velocidade_total}", 1, (255, 255, 255))
-        tela.blit(texto, (10, 60))
+        texto1 = FONTE_DISPLAY.render(f"Velocidade: {velocidade_total}", 1, (255, 255, 255))
+        tela.blit(texto1, (10, 60))
 
     chao.desenhar(tela)
     pygame.display.update()
 
 
 def main(genomas, config): # fitness function
-    global geracao
+    global geracao, velocidade_total
     geracao += 1
 
     if ai_jogando:
@@ -210,7 +212,7 @@ def main(genomas, config): # fitness function
 
     rodando = True
     while rodando:
-        relogio.tick(30)
+        relogio.tick(60)
 
         # interação com o usuário
         for evento in pygame.event.get():
@@ -292,7 +294,7 @@ def rodar(caminho_config):
     populacao.add_reporter(neat.StatisticsReporter())
 
     if ai_jogando:
-        populacao.run(main, 10000)
+        populacao.run(main, 1000)
     else:
         main(None, None)
 
